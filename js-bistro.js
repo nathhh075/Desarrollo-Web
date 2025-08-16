@@ -1,5 +1,7 @@
 //Menú
 ///*
+const prompt = require("prompt-sync")({ sigint: true });
+
 let menu = [
   { id: 1, nombre: "Hamburguesa Clásica", categoria: "Platos Fuertes", precio: 25500 },
   { id: 2, nombre: "Pizza Margarita", categoria: "Platos Fuertes", precio: 30000 },
@@ -17,20 +19,8 @@ let menu = [
   { id: 14, nombre: "Limonada", categoria: "Bebida", precio: 8000 }
 ];
 
-let pedidos = [];
-
-
-//Primero haré para ordenar un pedido
-
-const pedidosCrudos = [
-    cliente = definirCliente(),
-    platos [pedidos.lenght] = function(){
-        for (let i = 0; i<pedidos.length; i++){
-            pedidos[i]
-        }
-    }       
-    
-];
+let totalPedidos = [];
+let pedidosCrudos = [];
 
 
 //Pedir nombre del cliente - hacer esta más corta
@@ -41,20 +31,36 @@ function definirCliente() {
 }
 
 //función que se puede hacer una vez 
-function elegirPlatos (){
-    for (let i = 0; i<menu.length; i++){
-        console.log(menu[i] + "\n ")
-    }
-    let pedidos = [];
+function elegirPlatos (){ 
+       
     let continuarPedido; 
+    let platos = [];
+    console.log("Menú disponible:");
+        for (let i = 0; i < menu.length; i++) {
+            console.log(menu[i].id + " - " + menu[i].nombre + " - " + menu[i].precio);
+        }
 
     do {
         let platoId = prompt("Escoge tu plato con el ID que aparece en el menú:");
-        pedidos.push(platoId);
+        platos.push(platoId);
 
         continuarPedido = prompt("¿Deseas ordenar algo más? (si/no)").trim().toLowerCase();
         if (continuarPedido === "no") return pedidos;
     } while (continuarPedido.trim() === "" || continuarPedido === "si");
+}
+
+function crearPedido() {
+    let cliente = definirCliente();
+    let platosCliente = elegirPlatos();
+
+    pedidosCrudos.push({
+        cliente: cliente,
+        platos: platosCliente
+    });
+
+    totalPedidos.push({
+        pedidosCrudos
+    })
 }
 
 function mostrarOpciones() {
@@ -62,12 +68,12 @@ function mostrarOpciones() {
     switch (opc) {
         case '1':
             console.log("Has seleccionado Procesamiento de pedidos");
-            // Aquí el código de procesamiento
+                crearPedido();
             break;
 
         case '2':
-            console.log("1. ");
-            // Aquí el código de reportes
+            console.log("Cálcular las ventas diarias");
+            
             break;
 
         case '3':
@@ -83,3 +89,4 @@ function mostrarOpciones() {
     //*/
 
 let prueba = prompt ("escribe algo aqui")
+mostrarOpciones();
