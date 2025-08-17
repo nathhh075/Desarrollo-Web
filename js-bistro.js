@@ -40,82 +40,119 @@ function elegirPlatos(){
         if (plato) {
             platos.push(plato); 
             console.log(`Agregado: ${plato.nombre} - $${plato.precio}`);
+
+            // Switch para mensaje según la categoría
+            switch (plato.categoria.toLowerCase()) {
+                case "bebida":
+                    console.log("  Perfecto para refrescar tu comida.");
+                    break;
+                case "entrada":
+                    console.log("  Ideal para empezar tu pedido.");
+                    break;
+                case "plato fuerte":
+                    console.log("  ¡Disfruta de un plato principal delicioso!");
+                    break;
+                case "postre":
+                    console.log("  El toque dulce perfecto para cerrar tu comida.");
+                    break;
+            }
+
         } else {
             console.log("ID inválido");
         }
 
-        continuarPedido = prompt("¿Deseas ordenar algo más? (si/no): ").trim().toLowerCase(); //toLowerCase() vuelve minuscula todos los caracteres de la cadena
+        continuarPedido = prompt("¿Deseas ordenar algo más? (si/no): ").trim().toLowerCase();
     }
     return platos; 
 }
 
-// Procesar un pedido y guardarlo en pedidosCrudos
+
+
 function procesarPedido(){
     let cliente = definirCliente();
     let platos = elegirPlatos();
 
-    // Ordenamos los platos por categoría
     let bebidas = platos.filter(p => p.categoria.toLowerCase() === "bebida");
     let entradas = platos.filter(p => p.categoria.toLowerCase() === "entrada");
     let fuertes  = platos.filter(p => p.categoria.toLowerCase() === "plato fuerte");
     let postres  = platos.filter(p => p.categoria.toLowerCase() === "postre");
 
-    // Guardamos los platos en orden, pero con su objeto completo
-    let platosOrdenados = [
-        ...bebidas,
-        ...entradas,
-        ...fuertes,
-        ...postres,
-    ];
-
+    let platosOrdenados = [...bebidas, ...entradas, ...fuertes, ...postres];
     let platosModificados = platosOrdenados.map(p => p.nombre);
-    let pedido = { platosModificados, cliente };
+    let total = platosOrdenados.reduce((acc, p) => acc + p.precio, 0);
+
+    let pedido = {platosModificados, cliente, total };
     pedidosCrudos.push(pedido);
 
-    // Mostrar resumen en orden
     console.log("\nResumen del pedido:");
     platosOrdenados.forEach(p => console.log(`- ${p.nombre} ($${p.precio})`));
-    let total = platosOrdenados.reduce((acc, p) => acc + p.precio, 0);
+    
     console.log("Total: $" + total + "\n");
 
+    aplicarPromocion(pedido);
     console.log("\n Pedido registrado con éxito!");
+    
+    
 }
 
 
+function aplicarPromocion(pedido) {
+    let tienePlatoNoBebida = pedido.platosModificados.some(plato => {
+        let item = menu.find(m => m.nombre === plato);
+        return item && item.categoria.toLowerCase() !== "bebida";
+    });
+
+    if (pedido.total >= 40000 && tienePlatoNoBebida) console.log(`Promoción aplicada para ${pedido.cliente}: ¡Postre gratis!`);
+    
+}
+
 //Esta función calcula el total del pedido, uno a uno
 function calcularTotalCuenta() {
+    let categoriaMonto;
     if (pedidosCrudos.length === 0) {
         console.log("No hay pedidos registrados todavía.");
         return;
     }
+   
 
     pedidosCrudos.forEach((p, i) => {
-        let total = 0;
-
-        // Bucle para recorrer cada plato del pedido
-        for (let plato of p.platos) {
-            // Buscar el plato en el menú
-            let itemMenu = menu.find(m => m.nombre === plato.nombre);
-            if (itemMenu) {
-                total += itemMenu.precio;
-            }
-        }
-
-        // Mostrar pedido con total
-        console.log(`\ Pedido #${i+1}`);
+        console.log(`\nPedido #${i+1}`);
+        console.log(`   Platos: `);
+        p.platosModificados.forEach(plato => console.log(`- ${plato}`));
         console.log(`   Cliente: ${p.cliente}`);
-        console.log("   Platos:");
-        p.platos.forEach(pl => console.log(`     - ${pl.nombre}`));
-        console.log(`     Total: $${total}`);
+        console.log(`   Total: $${p.total}`);
+        //Para mostrar si es un precio alto-bajo-medio
+        if (p.total < 30000) {
+            categoriaMonto = "Bajo";
+        } else if (p.total >= 30000 && p.total <= 80000) {
+            categoriaMonto = "Medio";
+        } else {
+            categoriaMonto = "Alto";
+        }
+        console.log(`Clasificación del pedido: ${categoriaMonto}`);
     });
+
+    console.log("---------------------------------------")
+
+    let ingresoDiario = pedidosCrudos.reduce((acc, p) => acc + p.total, 0);
+    console.log(`\nTotal de ventas del día: $${ingresoDiario}`);
+
+}
+
+
+ function formatearListas(){
+         p.platosModificados.forEach(pl => {
+            console.log(`     - ${pl}`);
+        });
+
+        console.log("No hay pedidos registrados.");  
 }
 
 // Mostrar menú de opciones
 function mostrarOpciones() {
-    let opc1;
     let opc;
     do {
-        opc = prompt("\n\n1. Creación de pedidos \n2. Calculos \n3. Reportes \n4. Salir\n> ");
+        opc = prompt("\n\n1. Creación de pedidos \n2. Calculos \n3. Formatear listas de pedidos \n4. Salir\n> ");
 
         switch (opc) {
             case '1':
@@ -124,41 +161,16 @@ function mostrarOpciones() {
                 break;
 
             case '2':
-                opc1 = prompt("\n1. Calcular el total de todos los pedidos uno a uno \n2. Calcular el total del día \n>");
-                switch (opc1){
-                    //Este case era para ver los pedidos totales pero no calcula el precio de estos
-                    /*case '1': 
-                        console.log("\n Lista de Pedidos:");
-                        pedidosCrudos.forEach((p, i) => {
-                            console.log(`\nPedido #${i+1}:`);
-                            p.platosModificados.forEach(pl => {console.log(`   - ${pl}`);});
-                            console.log(`   Cliente: ${p.cliente}`);
-                        }); // aqui es para mostrar bonito
-                        break;
-                     */   
-                    case '1':
-                        console.log("\n Calculando totales....");
-                        calcularTotalCuenta();
-                        break;
-
-                    case '2':
-                        break;
-                }
+                console.log("\n Calculando totales....");
+                calcularTotalCuenta();
                 break;
 
             case '3':
-                opc1 = prompt("\n1. Ver todos los Pedidos \n2. Calcular el total de todos los pedidos uno a uno \n3. Calcular el total del día \n>");
-                switch (opc1){
-                    case '1':
-                        console.log("Saliendo del programa...");
-                        console.clear;
-                        break;
-                    }
-                    break;
+                formatearListas();
+                break;
                 
             case '4':
                 console.log("Saliendo del programa...");
-                console.clear;
                 break;
 
             default:
