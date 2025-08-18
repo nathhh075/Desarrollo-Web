@@ -85,10 +85,26 @@ function procesarPedido(){
     console.log("Total: $" + total + "\n");
 
     aplicarPromocion(pedido);
+    calcularIVA(pedido);
     console.log("\n Pedido registrado con éxito!");
     
     
 }
+
+function calcularIVA(pedido) {
+    const IVA = 0.19;
+
+    let ivaPedido = pedido.total * IVA;
+    let totalConIva = pedido.total + ivaPedido;
+
+    // Guardar en el pedido
+    pedido.iva = ivaPedido;
+    pedido.totalConIva = totalConIva;
+
+    console.log(`IVA del pedido de ${pedido.cliente}: $${ivaPedido.toFixed(2)}`);
+    console.log(`Total con IVA: $${totalConIva.toFixed(2)}`);
+}
+
 
 
 function aplicarPromocion(pedido) {
@@ -108,15 +124,20 @@ function calcularTotalCuenta() {
         console.log("No hay pedidos registrados todavía.");
         return;
     }
-   
+
+    let ingresoDiarioSinIva = 0;
+    let ingresoDiarioConIva = 0;
 
     pedidosCrudos.forEach((p, i) => {
         console.log(`\nPedido #${i+1}`);
         console.log(`   Platos: `);
         p.platosModificados.forEach(plato => console.log(`- ${plato}`));
         console.log(`   Cliente: ${p.cliente}`);
-        console.log(`   Total: $${p.total}`);
-        //Para mostrar si es un precio alto-bajo-medio
+        console.log(`   Subtotal: $${p.total}`);
+        console.log(`   IVA: $${p.iva.toFixed(2)}`);
+        console.log(`   Total con IVA: $${p.totalConIva.toFixed(2)}`);
+
+        // Clasificación del pedido
         if (p.total < 30000) {
             categoriaMonto = "Bajo";
         } else if (p.total >= 30000 && p.total <= 80000) {
@@ -125,14 +146,18 @@ function calcularTotalCuenta() {
             categoriaMonto = "Alto";
         }
         console.log(`Clasificación del pedido: ${categoriaMonto}`);
+
+        // Sumar ingresos
+        ingresoDiarioSinIva += p.total;
+        ingresoDiarioConIva += p.totalConIva;
     });
 
     console.log("---------------------------------------")
-
-    let ingresoDiario = pedidosCrudos.reduce((acc, p) => acc + p.total, 0);
-    console.log(`\nTotal de ventas del día: $${ingresoDiario}`);
-
+    console.log(`\nTotal de ventas del día (sin IVA): $${ingresoDiarioSinIva}`);
+    console.log(`Total de ventas del día (con IVA): $${ingresoDiarioConIva}`);
 }
+
+
 
 
 function formatearListas() {
