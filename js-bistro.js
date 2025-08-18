@@ -1,5 +1,5 @@
 const prompt = require("prompt-sync")({ sigint: true });
-
+//hola
 let menu = [
   { id: 1, nombre: "Hamburguesa Clásica", categoria: "Plato Fuerte", precio: 25500 },
   { id: 2, nombre: "Pizza Margarita", categoria: "Plato Fuerte", precio: 30000 },
