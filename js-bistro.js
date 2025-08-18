@@ -26,45 +26,40 @@ function definirCliente() {
 }
 
 // Mostrar menú y dejar elegir platos
-function elegirPlatos(){ 
-    let platos = [];
-    let continuarPedido = "si";
+function elegirPlatos() { 
+  const platos = [];
+  let continuarPedido = "si";
 
-    console.log("\nMenú disponible:");
-    menu.forEach(p => console.log(`${p.id} - ${p.nombre} - $${p.precio}`));
+  console.log("\nMenú disponible:");
+  menu.forEach(p => console.log(`${p.id} - ${p.nombre} - $${p.precio}`));
 
-    while (continuarPedido === "si") {
-        let platoId = parseInt(prompt("\nEscoge tu plato con el ID que aparece en el menú: "));
-        let plato = menu.find(p => p.id === platoId);
-    
-        if (plato) {
-            platos.push(plato); 
-            console.log(`Agregado: ${plato.nombre} - $${plato.precio}`);
+  while (continuarPedido === "si" || continuarPedido === "s") {
+    const entrada = prompt("\nEscoge tu plato con el ID que aparece en el menú: ").trim();
+    const platoId = Number(entrada);
 
-            // Switch para mensaje según la categoría
-            switch (plato.categoria.toLowerCase()) {
-                case "bebida":
-                    console.log("  Perfecto para refrescar tu comida.");
-                    break;
-                case "entrada":
-                    console.log("  Ideal para empezar tu pedido.");
-                    break;
-                case "plato fuerte":
-                    console.log("  ¡Disfruta de un plato principal delicioso!");
-                    break;
-                case "postre":
-                    console.log("  El toque dulce perfecto para cerrar tu comida.");
-                    break;
-            }
-
-        } else {
-            console.log("ID inválido");
+    if (!Number.isInteger(platoId)) {
+      console.log("ID inválido (no es un número entero). Intenta de nuevo.");
+    } else {
+      const plato = menu.find(p => p.id === platoId);
+      if (plato) {
+        platos.push(plato);
+        switch (plato.categoria.toLowerCase()) {
+          case "bebida":       console.log("  Perfecto para refrescar tu comida."); break;
+          case "entrada":      console.log("  Ideal para empezar tu pedido."); break;
+          case "plato fuerte": console.log("  ¡Disfruta de un plato principal delicioso!"); break;
+          case "postre":       console.log("  El toque dulce perfecto para cerrar tu comida."); break;
         }
-
-        continuarPedido = prompt("¿Deseas ordenar algo más? (si/no): ").trim().toLowerCase();
+      } else {
+        console.log("ID no encontrado en el menú. Intenta de nuevo.");
+      }
     }
-    return platos; 
+
+    continuarPedido = prompt("¿Deseas ordenar algo más? (si/no): ").trim().toLowerCase();
+  }
+
+  return platos; // <-- aquí, fuera del while
 }
+
 
 
 
@@ -140,13 +135,11 @@ function calcularTotalCuenta() {
 }
 
 
- function formatearListas(){
-         p.platosModificados.forEach(pl => {
-            console.log(`     - ${pl}`);
-        });
-
-        console.log("No hay pedidos registrados.");  
+function formatearListas() {
+  pedidosCrudos = [];
+  console.log("Se han eliminado las listas... :D");
 }
+
 
 // Mostrar menú de opciones
 function mostrarOpciones() {
