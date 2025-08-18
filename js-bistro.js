@@ -19,11 +19,23 @@ let menu = [
 
 let pedidosCrudos = []; // siempre será un array de objetos con cliente y platos
 
+const formatearMoneda = function(valor) {
+    return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0
+    }).format(valor);
+};
+
+const convertirMayusculas = texto => texto.toUpperCase();
+
 // Pedir nombre del cliente
 function definirCliente() {
     let cliente = prompt("Nombre del cliente: ");
-    return (cliente && cliente.trim() !== "") ? cliente : "Cliente Anónimo";
+    cliente = (cliente && cliente.trim() !== "") ? cliente : "Cliente Anónimo";
+    return convertirMayusculas(cliente);
 }
+
 
 // Mostrar menú y dejar elegir platos
 function elegirPlatos() { 
@@ -82,7 +94,7 @@ function procesarPedido(){
     console.log("\nResumen del pedido:");
     platosOrdenados.forEach(p => console.log(`- ${p.nombre} ($${p.precio})`));
     
-    console.log("Total: $" + total + "\n");
+    console.log("Total: " + formatearMoneda(total) + "\n");
 
     aplicarPromocion(pedido);
     calcularIVA(pedido);
