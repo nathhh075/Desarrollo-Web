@@ -33,4 +33,4 @@ Instalar dependencias necesarias:
 
 Ejecutar el programa:
 
-      node js.bistro.js
+      node js-bistro.js
